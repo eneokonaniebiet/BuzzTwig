@@ -1,0 +1,1 @@
+{"name":"buzztwig","private":true,"version":"0.1.0","scripts":{"check:backend":"npm --prefix backend/api run typecheck","test":"npm --prefix backend/api test"}}
