@@ -1,0 +1,1 @@
+{"name":"@buzztwig/api","private":true,"version":"0.1.0","type":"module","scripts":{"dev":"tsx src/server.ts","typecheck":"tsc --noEmit","test":"node --test"},"dependencies":{"express":"^5.1.0"},"devDependencies":{"@types/express":"^5.0.3","tsx":"^4.20.3","typescript":"^5.9.2"}}
