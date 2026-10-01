@@ -1,9 +1,31 @@
 import express from "express";
+import cors from "cors";
+import { env } from "./config.js";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import roomRoutes from "./routes/rooms.js";
+import messageRoutes from "./routes/messages.js";
+import walletRoutes from "./routes/wallet.js";
+import notificationRoutes from "./routes/notifications.js";
+import communityRoutes from "./routes/communities.js";
+
 const app=express();
 app.disable("x-powered-by");
+app.use(cors({origin:env.CORS_ORIGINS.split(",").map(v=>v.trim()),credentials:true}));
 app.use(express.json({limit:"1mb"}));
 app.get("/health",(_req,res)=>res.json({service:"buzztwig-api",status:"ok"}));
 app.get("/v1/health",(_req,res)=>res.json({service:"buzztwig-api",status:"ok",version:"v1"}));
-const port=Number(process.env.PORT??3000);
-if(process.env.NODE_ENV!=="test") app.listen(port,()=>console.log(`BuzzTwig API listening on ${port}`));
+app.use("/v1/auth",authRoutes);
+app.use("/v1/users",userRoutes);
+app.use("/v1/rooms",roomRoutes);
+app.use("/v1/messages",messageRoutes);
+app.use("/v1/wallet",walletRoutes);
+app.use("/v1/notifications",notificationRoutes);
+app.use("/v1/communities",communityRoutes);
+app.use((err:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{
+  console.error(err);
+  if(err && typeof err==="object" && "name" in err && err.name==="ZodError") return res.status(400).json({error:"INVALID_REQUEST"});
+  res.status(500).json({error:"INTERNAL_ERROR"});
+});
+if(env.NODE_ENV!=="test") app.listen(env.PORT,()=>console.log(`BuzzTwig API listening on ${env.PORT}`));
 export {app};
