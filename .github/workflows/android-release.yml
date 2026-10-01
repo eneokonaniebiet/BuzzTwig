@@ -1,0 +1,23 @@
+name: BuzzTwig Android Build
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Generate Android project files
+        run: flutter create --platforms=android --project-name=buzztwig .
+      - working-directory: apps/mobile
+        run: flutter pub get
+      - working-directory: apps/mobile
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: buztwig-android
+          path: apps/mobile/build/app/outputs/flutter-apk/app-release.apk
